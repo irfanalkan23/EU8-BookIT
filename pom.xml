@@ -53,12 +53,14 @@
             <version>42.2.10</version>
         </dependency>
 
+        <!-- for deserialization and serialization -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.12.4</version>
         </dependency>
 
+        <!-- something extra, for making pojo classes clean, @Getters, @Setters, @ToString, @JsonIgnoreProperties(ignoreUnknown = true) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
