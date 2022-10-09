@@ -13,7 +13,7 @@ public class ConfigurationReader {
     static {
 
         try {
-            String path = "configuration.properties";
+            String path = "configuration.properties";   //path is like this, because directly under project
             FileInputStream input = new FileInputStream(path);
             properties = new Properties();
             properties.load(input);

@@ -25,9 +25,12 @@ public class BookItApiUtil {
     }
 
 
-    //one method param role --> userType "student-member" "student-leader" "teacher"
-    //returns --> token
-
+    //one method param role --> (you will pass) userType "student-member" "student-leader" "teacher"
+    //(and it will retrieve information from configuration.properties)
+    //returns --> token (switch inside the method)
+    /* (-->because most of your test cases, we don't care about which teacher or student you are using. the only thing
+    that matters is if you are logging in as a "student-leader", return the "student-leader" token
+    */
 
     public static void deleteStudent(String studentEmail,String studentPassword){
 

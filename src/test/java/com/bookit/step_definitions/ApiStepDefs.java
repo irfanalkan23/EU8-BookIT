@@ -40,10 +40,15 @@ public class ApiStepDefs {
 
          response = given().accept(ContentType.JSON)
                 .and()
+
+                 // BookIt API documentation says: "Authentication:
+                 //... Simply put, we expect for the authorization token to be included in all
+                 // api requests to the server in a header that looks like the following:
+                 //Authorization: Bearer your-token
                 .header("Authorization", token)
                 .when()
                 .get(Environment.BASE_URL + "/api/users/me");
-
+                //no verification is asked in this step
     }
 
     @Then("status code should be {int}")
@@ -57,8 +62,8 @@ public class ApiStepDefs {
     public void theInformationAboutCurrentUserFromApiAndDatabaseShouldMatch() {
         System.out.println("we will compare database and api in this step");
 
-        //get information from database
-        //connection is from hooks and it will be ready
+        //GET INFORMATION FROM DB
+        //connection is from hooks and it will be ready (because we put @db above Scenario
         String query = "select firstname,lastname,role from users\n" +
                 "where email = '"+emailGlobal+"'";
 
@@ -69,14 +74,16 @@ public class ApiStepDefs {
         String expectedLastName = (String) dbMap.get("lastname");
         String expectedRole = (String) dbMap.get("role");
 
-        //get information from api
+        //GET INFORMATION FROM API
         JsonPath jsonPath = response.jsonPath();
         //save api info into variables
         String actualFirstName = jsonPath.getString("firstName");
+        //this is "actual", because we assume DB is correct (EXPECTED) when comparing the values
+        // (if we are not inserting something)!
         String actualLastName = jsonPath.getString("lastName");
         String actualRole = jsonPath.getString("role");
 
-        //compare database vs api
+        //COMPARE DB VS API     //JUnit assertians
         Assert.assertEquals(expectedFirstName,actualFirstName);
         Assert.assertEquals(expectedLastName,actualLastName);
         Assert.assertEquals(expectedRole,actualRole);
@@ -85,7 +92,7 @@ public class ApiStepDefs {
 
     @Then("UI,API and Database user information must be match")
     public void uiAPIAndDatabaseUserInformationMustBeMatch() {
-        //get information from database
+        //GET INFORMATION FROM DATABASE
         //connection is from hooks and it will be ready
         String query = "select firstname,lastname,role from users\n" +
                 "where email = '"+emailGlobal+"'";
@@ -97,14 +104,15 @@ public class ApiStepDefs {
         String expectedLastName = (String) dbMap.get("lastname");
         String expectedRole = (String) dbMap.get("role");
 
-        //get information from api
+        //GET INFORMATION FROM API
+        //let's use jsonPath. We could use pojo as well
         JsonPath jsonPath = response.jsonPath();
         //save api info into variables
         String actualFirstName = jsonPath.getString("firstName");
         String actualLastName = jsonPath.getString("lastName");
         String actualRole = jsonPath.getString("role");
 
-        //get information from UI
+        //GET INFORMATION FROM UI
         SelfPage selfPage = new SelfPage();
         String actualUIName = selfPage.name.getText();
         String actualUIRole = selfPage.role.getText();
@@ -128,6 +136,11 @@ public class ApiStepDefs {
 
     }
 
+    /**
+     *
+     * @param path --> endpoint
+     * @param studentInfo --> dynamically getting student info as a Map
+     */
     @When("I send POST request to {string} endpoint with following information")
     public void i_send_POST_request_to_endpoint_with_following_information(String path, Map<String,String> studentInfo) {
         //why we prefer to get information as a map from feature file ?
@@ -139,12 +152,24 @@ public class ApiStepDefs {
         studentPassword = studentInfo.get("password");
 
         response = given().accept(ContentType.JSON)
+//                .contentType(ContentType.JSON)      //we don't need this.
+//                because we are not sending any info in body (not sending JSON)
+//                we are sending in Query Params (as a Map)
+//                BookIt API works with Query Params for POST request!.
+
                 .queryParams(studentInfo)
+//                why using queryParams, instead of sending as a body? because document says so!
+//                there is no serialization (Java to JSON) here!
+//                just converting Java (map) to query parameter (queryParams) as key and value
+//                which you can also type manually to the url.
+//                If the documentation said body, then we would need body-map serialization, need jackson in pom.xml,
+//                and serialize to body.. we need to say contentType(ContentType.JSON).
+
                 .and().header("Authorization",token)
                 .log().all()
                 .when()
                 .post(Environment.BASE_URL + path)
-        .then().log().all().extract().response();        ;
+        .then().log().all().extract().response();
 
 
     }

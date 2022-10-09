@@ -17,16 +17,18 @@ public class Environment {
         public static final String MEMBER_PASSWORD;
         public static final String LEADER_EMAIL;
         public static final String LEADER_PASSWORD;
+        //constant variables
 
         static {
 
             Properties properties = null;
             String environment = System.getProperty("environment") != null ? environment = System.getProperty("environment") : ConfigurationReader.get("environment");
-            //String environment = ConfigurationReader.get("environment");
+            // String environment = ConfigurationReader.get("environment");  --> get() is inside ConfigurationReader
 
             try {
 
                 String path = System.getProperty("user.dir") + "/src/test/resources/Environments/" + environment + ".properties";
+                // System.getProperty("user.dir") --> gets the project location for any computer
 
                 FileInputStream input = new FileInputStream(path);
                 properties = new Properties();

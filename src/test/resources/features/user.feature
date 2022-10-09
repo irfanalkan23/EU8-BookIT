@@ -32,4 +32,4 @@ Feature: User Verification
     Examples:
       | email              | password         |
       | wcanadinea@ihg.com | waverleycanadine |
-      #| nshearsby7w@uiuc.edu | lorettebradnum |
+#      | nshearsby7w@uiuc.edu | lorettebradnum |
